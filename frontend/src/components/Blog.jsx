@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Calendar, User, Clock, ArrowRight } from 'lucide-react';
+import { getBlogPosts } from '../services/api';
 import { mockBlogPosts } from '../mock';
 
 const Blog = () => {
+  const [posts, setPosts] = useState(mockBlogPosts);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await getBlogPosts();
+        if (response.data && response.data.length > 0) {
+          setPosts(response.data);
+        }
+      } catch (error) {
+        console.log('Using mock data:', error.message);
+      }
+    };
+    fetchPosts();
+  }, []);
+
   return (
     <section id="blog" className="section-container">
       <div className="section-content">
@@ -15,7 +33,7 @@ const Blog = () => {
         </div>
 
         <div className="blog-grid">
-          {mockBlogPosts.map((post) => (
+          {posts.map((post) => (
             <article key={post.id} className="blog-card">
               <div className="blog-image-wrapper">
                 <img src={post.image} alt={post.title} className="blog-image" />
@@ -42,10 +60,10 @@ const Blog = () => {
                     <User size={16} />
                     <span>{post.author}</span>
                   </div>
-                  <button className="blog-read-more">
+                  <Link to={`/blog/${post.slug || post.id}`} className="blog-read-more">
                     Leer más
                     <ArrowRight size={16} />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </article>

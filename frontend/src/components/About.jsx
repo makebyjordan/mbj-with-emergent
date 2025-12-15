@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Award, Users, Briefcase, Code } from 'lucide-react';
+import { getAbout } from '../services/api';
 import { mockAbout } from '../mock';
 
 const About = () => {
+  const [about, setAbout] = useState(mockAbout);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const response = await getAbout();
+        if (response.data) {
+          setAbout(response.data);
+        }
+      } catch (error) {
+        console.log('Using mock data:', error.message);
+      }
+    };
+    fetchAbout();
+  }, []);
+
   return (
     <section id="about" className="section-container section-dark">
       <div className="section-content">
@@ -10,13 +27,13 @@ const About = () => {
           <div className="about-left">
             <span className="section-badge">Sobre Mí</span>
             <h2 className="section-title">Desarrollador Apasionado por la Innovación</h2>
-            <p className="about-bio">{mockAbout.bio}</p>
+            <p className="about-bio">{about.bio}</p>
             
             <div className="about-stats-grid">
               <div className="about-stat">
                 <Award className="stat-icon" size={24} />
                 <div>
-                  <div className="stat-value">{mockAbout.experience}</div>
+                  <div className="stat-value">{about.experience}</div>
                   <div className="stat-label">Experiencia</div>
                 </div>
               </div>
@@ -24,7 +41,7 @@ const About = () => {
               <div className="about-stat">
                 <Briefcase className="stat-icon" size={24} />
                 <div>
-                  <div className="stat-value">{mockAbout.projects}</div>
+                  <div className="stat-value">{about.projects}</div>
                   <div className="stat-label">Completados</div>
                 </div>
               </div>
@@ -32,7 +49,7 @@ const About = () => {
               <div className="about-stat">
                 <Users className="stat-icon" size={24} />
                 <div>
-                  <div className="stat-value">{mockAbout.clients}</div>
+                  <div className="stat-value">{about.clients}</div>
                   <div className="stat-label">Satisfechos</div>
                 </div>
               </div>
@@ -48,7 +65,7 @@ const About = () => {
             <div className="skills-container">
               <h3 className="skills-title">Tecnologías & Herramientas</h3>
               <div className="skills-grid">
-                {mockAbout.skills.map((skill, index) => (
+                {about.skills?.map((skill, index) => (
                   <div key={index} className="skill-badge">
                     {skill}
                   </div>

@@ -1,15 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ExternalLink, Filter } from 'lucide-react';
+import { getProjects } from '../services/api';
 import { mockProjects } from '../mock';
 
 const Portfolio = () => {
   const [filter, setFilter] = useState('Todos');
+  const [projects, setProjects] = useState(mockProjects);
+  
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await getProjects();
+        if (response.data && response.data.length > 0) {
+          setProjects(response.data);
+        }
+      } catch (error) {
+        console.log('Using mock data:', error.message);
+      }
+    };
+    fetchProjects();
+  }, []);
   
   const categories = ['Todos', 'Desarrollo Web', 'Inteligencia Artificial', 'Automatización'];
   
   const filteredProjects = filter === 'Todos' 
-    ? mockProjects 
-    : mockProjects.filter(project => project.category === filter);
+    ? projects 
+    : projects.filter(project => project.category === filter);
 
   return (
     <section id="portfolio" className="section-container section-dark">
@@ -41,9 +57,15 @@ const Portfolio = () => {
               <div className="portfolio-image-wrapper">
                 <img src={project.image} alt={project.title} className="portfolio-image" />
                 <div className="portfolio-overlay">
-                  <button className="portfolio-link">
+                  <a 
+                    href={project.link || '#'} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="portfolio-link"
+                    onClick={(e) => !project.link && e.preventDefault()}
+                  >
                     <ExternalLink size={20} />
-                  </button>
+                  </a>
                 </div>
               </div>
               

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare, User, Send, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { createContact } from '../services/api';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -19,12 +20,16 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Mock submission - will be replaced with API call
-    setTimeout(() => {
+    try {
+      await createContact(formData);
       toast.success('¡Mensaje enviado! Te contactaré pronto.');
       setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      toast.error('Error al enviar el mensaje. Inténtalo de nuevo.');
+      console.error('Error:', error);
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   return (

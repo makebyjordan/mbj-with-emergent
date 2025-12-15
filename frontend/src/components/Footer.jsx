@@ -1,8 +1,17 @@
-import React from 'react';
-import { Github, Linkedin, Twitter, Mail, Heart } from 'lucide-react';
+import React, { useState } from 'react';
+import { Github, Linkedin, Twitter, Mail, Heart, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import AuthModal from './AuthModal';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    navigate('/dashboard');
+  };
 
   return (
     <footer className="footer">
@@ -70,8 +79,18 @@ const Footer = () => {
           <p className="footer-made-with">
             Hecho con <Heart size={14} className="heart-icon" /> y tecnología de vanguardia
           </p>
+          <button className="dash-footer-btn" onClick={() => setShowAuthModal(true)}>
+            <Settings size={14} />
+            DASH
+          </button>
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+      />
     </footer>
   );
 };

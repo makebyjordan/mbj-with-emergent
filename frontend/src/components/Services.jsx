@@ -1,14 +1,40 @@
-import React from 'react';
-import { Code2, Brain, Zap, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { 
+  Code2, Brain, Zap, Check, Handshake, Rocket, Shield, 
+  Globe, Smartphone, Database, Cloud, Cpu, Lock, 
+  BarChart, Users, Settings, Mail, Phone, Star,
+  Briefcase, Target, TrendingUp, Award, Heart
+} from 'lucide-react';
+import { getServices } from '../services/api';
 import { mockServices } from '../mock';
 
 const iconMap = {
-  Code2: Code2,
-  Brain: Brain,
-  Zap: Zap
+  Code2, Brain, Zap, Handshake, Rocket, Shield,
+  Globe, Smartphone, Database, Cloud, Cpu, Lock,
+  BarChart, Users, Settings, Mail, Phone, Star,
+  Briefcase, Target, TrendingUp, Award, Heart
 };
 
 const Services = () => {
+  const [services, setServices] = useState(mockServices);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await getServices();
+        if (response.data && response.data.length > 0) {
+          setServices(response.data);
+        }
+      } catch (error) {
+        console.log('Using mock data:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
   return (
     <section id="services" className="section-container">
       <div className="section-content">
@@ -21,8 +47,10 @@ const Services = () => {
         </div>
 
         <div className="services-grid">
-          {mockServices.map((service) => {
-            const IconComponent = iconMap[service.icon];
+          {services.map((service) => {
+            // Normalizar nombre del icono (primera letra mayúscula)
+            const iconName = service.icon ? service.icon.charAt(0).toUpperCase() + service.icon.slice(1).toLowerCase() : 'Code2';
+            const IconComponent = iconMap[iconName] || iconMap[service.icon] || Code2;
             return (
               <div key={service.id} className="service-card">
                 <div className="service-icon-wrapper">
@@ -43,9 +71,23 @@ const Services = () => {
                   ))}
                 </ul>
                 
-                <button className="btn-secondary" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
-                  Solicitar Cotización
-                </button>
+                {service.ctaUrl ? (
+                  <a 
+                    href={service.ctaUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-secondary"
+                  >
+                    {service.ctaText || 'Solicitar Cotización'}
+                  </a>
+                ) : (
+                  <button 
+                    className="btn-secondary" 
+                    onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    {service.ctaText || 'Solicitar Cotización'}
+                  </button>
+                )}
               </div>
             );
           })}

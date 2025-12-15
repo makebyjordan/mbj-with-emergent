@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
 import { Toaster } from './components/ui/sonner';
 import Header from './components/Header';
@@ -9,8 +10,11 @@ import Blog from './components/Blog';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import Dashboard from './components/Dashboard';
+import BlogList from './components/BlogList';
+import BlogPage from './components/BlogPage';
 
-function App() {
+function HomePage() {
   return (
     <div className="App" id="home">
       <Header />
@@ -23,8 +27,21 @@ function App() {
         <Contact />
       </main>
       <Footer />
-      <Toaster position="top-right" />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:slug" element={<BlogPage />} />
+      </Routes>
+      <Toaster position="top-right" />
+    </Router>
   );
 }
 
